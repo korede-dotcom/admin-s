@@ -25,10 +25,11 @@ class CloudinaryRepo {
   }
 
   uploadMany = (files) => {
+
     return new Promise((resolve, reject) => {
       const promises = [];
   
-      files.forEach((file) => {
+      files?.forEach((file) => {
         promises.push(
           new Promise((resolve, reject) => {
             cloudinary.uploader.upload(
@@ -70,5 +71,6 @@ class CloudinaryRepo {
     return this._parser;
   }
 }
+
 
 module.exports = new CloudinaryRepo();

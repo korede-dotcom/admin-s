@@ -1,5 +1,6 @@
-const hotelConfigRepository = require("../repos/hotel-manager-repo")
+const hotelConfigRepository = require("../repos/Room-repo")
 const asynchandler = require("express-async-handler")
+const cloudinaryRepo = require("../repos/cloudinary")
 
 const getPkgs = asynchandler( async (req,res) => {
     
@@ -14,7 +15,7 @@ const getPkgs = asynchandler( async (req,res) => {
 
 const getActivePkgs = asynchandler( async (req,res) => {
     if(req.user){
-        const pkgs = await hotelConfigRepository.findAllActiveByBranch(req.user.branch)
+        const pkgs = await hotelConfigRepository.findAllApproveByBranch(req.user.branch)
         return res.status(200).json({
             message:"hotel pkgs fetched",
             data:{
@@ -71,11 +72,33 @@ const approve = asynchandler( async (req,res) => {
     })
 });
 
-const createhotelpkg = asynchandler( async (req,res) => {
-    const createeventpackage = await hotelConfigRepository.create({...req.body,status:false})
+const createhotelpkg = asynchandler(async (req,res) => {
+ 
+  const upload = await cloudinaryRepo.uploadMany(req.files)
+  console.log("🚀 ~ file: Hotelmanager.js:77 ~ createhotelpkg ~ upload:", upload)
+   const imageObject = upload.map(url => {
+       return {        
+           secure_url: url.secure_url,
+           url:url.url
+           
+       }
+
+   });
+   if(req.user.role_id === 1){
+    const createeventpackage = await hotelConfigRepository.create({...req.body,status:true,picture:[...imageObject.map(r => r.secure_url)]})
     return res.status(200).json({
-       
-        message:"hotel package ",
+        status:true,
+        message:"hotel roomn created ",
+        data:{
+            createeventpackage
+        }
+    })
+   }
+
+    const createeventpackage = await hotelConfigRepository.create({...req.body,status:false,picture:[...imageObject.map(r => r.secure_url)]})
+    return res.status(200).json({
+        status:true,
+        message:"hotel roomn created ",
         data:{
             createeventpackage
         }

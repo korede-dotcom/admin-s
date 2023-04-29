@@ -1,4 +1,5 @@
 const Services = require('../models/Services');
+const {Sequelize,fn} = require("sequelize")
 
 // Create
 const createService = async (name, status) => {
@@ -28,7 +29,11 @@ const getServiceById = async (id) => {
 
 const getAllServices = async () => {
   try {
-    const services = await Services.findAll();
+    // const services = await Services.findAll();
+    // return services;
+    const services = await Services.findAll({
+      attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('name')), 'name']],
+    });
     return services;
   } catch (err) {
     console.error(err);

@@ -11,7 +11,7 @@ class UserRepository {
     try {
 
       const createdUser = await User.create(user,{transaction});
-      const saveManager = await Manager.create({user_id:createdUser._id,branch_id:user.branch_id,phonenumber:user.phonenumber,address:user.address},{transaction})
+      const saveManager = await Manager.create({user_id:createdUser._id,branch_id:user.branch_id,phonenumber:user.phonenumber,address:user.address,state:user.state},{transaction})
       transaction.commit()
       return createdUser.toJSON();
     } catch (err) {

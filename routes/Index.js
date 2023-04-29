@@ -11,6 +11,7 @@ const branchRoute = require("./Branch")
 const imageRoute = require("./Image")
 const ServiceRoute = require("./Service")
 const DashboardRoute = require("./Dashboard")
+const TodoRoute = require("./Todo")
 
 
 
@@ -27,6 +28,7 @@ routes.use("/branch",branchRoute)
 routes.use("/images",imageRoute)
 routes.use("/service",ServiceRoute)
 routes.use("/dashboard",DashboardRoute)
+routes.use("/todos",TodoRoute)
 
 
 

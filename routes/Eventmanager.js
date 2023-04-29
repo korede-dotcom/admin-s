@@ -5,7 +5,7 @@ const {protect} = require("../repos/token-repo")
 const allowedUser = require("../middleware/Authorization")
 const {checkEventStatus} = require("../utils/Checkservicestatus")
 
-routes.post("/create",protect,allowedUser([2]),checkEventStatus,createEventConfigRules,managerControl.createeventpkg)
+routes.post("/create",protect,allowedUser([1,2,5]),checkEventStatus,createEventConfigRules,managerControl.createeventpkg)
         .put("/update",protect,allowedUser([2]),checkEventStatus,updateEventConfigRules,managerControl.updateeventpkg)
         .get("/pkg",protect,allowedUser([2,1,5]),checkEventStatus,managerControl.getPkgs)
         .get("/pending/pkg",protect,allowedUser([2,1,5]),checkEventStatus,managerControl.getPendingPkgs)

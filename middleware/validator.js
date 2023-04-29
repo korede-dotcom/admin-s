@@ -37,7 +37,7 @@ const validatecreateUser = [
 const validatecreateAnyUser = [
   body('name').not().isEmpty().withMessage('Name is required'),
   body('email').isEmail().withMessage('Invalid email address'),
-  body('role_id').toInt().isIn([2,3,4,5,6]).withMessage('Invalid role value'),
+  body('role_id').toInt().isIn([2,3,4,5,6,7,8,9]).withMessage('Invalid role value'),
   body('address').optional(),
   body('phonenumber').notEmpty().isLength(11).withMessage('phonenumber must be 11 digit'),
 
@@ -181,7 +181,11 @@ const updateGymConfigValidator = [
 
 
 const createHotelConfigValidator = [
-  body('room_type').notEmpty().withMessage('Room type is required'),
+  body('type').notEmpty().withMessage('Room type is required'),
+  body('room_name').notEmpty().withMessage('Room name is required'),
+  body('room_number').notEmpty().withMessage('Room name is required'),
+  body('num_beds').notEmpty().withMessage('numb_beds is required'),
+  body('has_wifi').notEmpty().withMessage('has_wifi is required'),
   body('number_of_guests').notEmpty().withMessage('Number of guests must be at least 1'),
   body('service_id').notEmpty().withMessage("service_id is required"),
   body('price').isDecimal({ decimal_digits: '2' }).withMessage('Price must be a decimal number with 2 decimal places'),
@@ -189,7 +193,7 @@ const createHotelConfigValidator = [
   .notEmpty().withMessage('Branch ID is required.')
   .isInt({ min: 1 }).withMessage('Branch ID must be a positive integer.'),
 body('service_id')
-  .notEmpty().withMessage('Branch ID is required.')
+  .notEmpty().withMessage('service_idis required.')
   .isInt({ min: 1 }).withMessage('service_id must be a positive integer.'),
   (req, res, next) => {
     const errors = validationResult(req);
@@ -229,7 +233,7 @@ const validateGenMessage = [
 
 
   const serviceValidator = [
-    body('name').isIn(['eventhall', 'gym', 'hotel']).withMessage('Invalid service name'),
+    body('name').isIn(['eventhall', 'gym', 'shortlet']).withMessage('Invalid service name'),
   (req, res,next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -238,6 +242,23 @@ const validateGenMessage = [
     next();
   },
   ]
+
+
+const todoListValidationRules = [
+  body('title').optional().isString().trim().escape(),
+  body('description').optional().isString().trim().escape(),
+  body('created_by').optional().exists().isUUID(),
+  body('assigned_to').exists().isUUID(),
+  body('dueDate').optional().isISO8601(),
+  body('completed').optional().isBoolean(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (errors.isEmpty()) {
+      return next();
+    }
+    return res.status(400).json({ errors: errors.array() });
+  }
+];
 
 
 
@@ -255,7 +276,8 @@ module.exports = {validateUser,
   validateBranch,
   validatecreateAnyUser,
   serviceValidator,
-  validateGenMessage
+  validateGenMessage,
+  todoListValidationRules
   
 };
 

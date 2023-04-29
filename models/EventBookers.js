@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const connectDb = require("../config/connectDB");
 const sequelize = connectDb;
 
-const EventBooker = sequelize.define('event_booker', {
+const EventBooking = sequelize.define('eventbooking', {
   _id: {
     type: Sequelize.UUID,
     defaultValue: Sequelize.UUIDV4,
@@ -29,8 +29,16 @@ const EventBooker = sequelize.define('event_booker', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  reference_id:{
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  payment_mode:{
+    type:DataTypes.ENUM("card","cash","free","cheque","transfer","scanbank"),
+    defaultValue:"card"
+},
 });
 
-EventBooker.sync();
+EventBooking.sync();
 
-module.exports = EventBooker;
+module.exports = EventBooking;

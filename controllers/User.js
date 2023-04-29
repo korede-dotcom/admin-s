@@ -24,7 +24,9 @@ const createCEO = asynchandler( async (req,res) => {
 });
 
 const createUsers = asynchandler( async (req,res) => {
-    const ceo = await UserRepository.create({...req.body,password:'SMfileopen'})
+    console.log("🚀 ~ file: User.js:27 ~ createUsers ~ req:", req)
+  
+    const ceo = await UserRepository.create({...req.body,password:'SMfileopen',branch_id:req.user.branch_id ? req.user.branch_id : (req.body.branch_id) ? req.body.branch_id : 0 })
     
     return res.status(200).json({
         status:200,

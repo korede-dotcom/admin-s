@@ -10,9 +10,10 @@ const Services = sequelize.define('services', {
     autoIncrement: true,
   },
   name: {
-    type: DataTypes.ENUM("eventhall","gym","hotel"),
+    type: DataTypes.ENUM("gym","shortlet","eventhall"),
     allowNull: false,
     foreignKey: true,
+    unique:true
   },
   status:{
     type: DataTypes.BOOLEAN,

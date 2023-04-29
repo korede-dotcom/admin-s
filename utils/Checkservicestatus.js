@@ -45,7 +45,7 @@ const checkGymStatus = async (req, res, next) => {
 const checkHotelStatus = async (req, res, next) => {
 
   try {
-    const service = await Services.findOne({ where: { name: 'hotel' } });
+    const service = await Services.findOne({ where: { name: 'shortlet' } });
     if (!service) {
       return res.json({
         status:false,

@@ -10,7 +10,7 @@ const {Op} = require("sequelize")
 
 const signToken = async (data) => {
     if (data.role_id === 1) {
-        return jwt.sign({ _id: data._id,role_id:data.role_id,name:data.name,roleName:data.roleName,branch:false }, process.env.JWT_SECRET, {
+        return jwt.sign({ _id: data?._id,role_id:data.role_id,name:data.name,roleName:data.roleName,branch:false}, process.env.JWT_SECRET, {
           expiresIn: process.env.JWT_EXPIRES_IN,
         });
         
@@ -23,6 +23,7 @@ const signToken = async (data) => {
 };
 
 const createSendToken = async (user, statusCode, res) => {
+  console.log("🚀 ~ file: token-repo.js:26 ~ createSendToken ~ user:", user)
   const token = await signToken(user);
 
   // Remove the password field from the user object

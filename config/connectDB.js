@@ -1,10 +1,11 @@
 const { Sequelize } = require('sequelize');
+require("dotenv").config()
 
 if (!process.env.DATABASE_URL){
-const {dbName,dbUser,dbPassword,dbHost} = process.env
+const {dbName,dbUser,dbPassword,dbHost,dbDialect} = process.env
 module.exports = new Sequelize(dbName,dbUser,dbPassword, {
     host: dbHost,
-    dialect: 'postgres',
+    dialect: dbDialect,
     logging: false,
     pool: {
         max: 5,

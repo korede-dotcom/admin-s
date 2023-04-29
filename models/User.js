@@ -43,8 +43,9 @@ const User = sequelize.define('user', {
         defaultValue: 'false',
     },
     roleName: {
-        type: DataTypes.ENUM,
-        values: ["ceo","eventmanager","gymmanager","hotelmanager","staffs","secretary"],
+        type: DataTypes.STRING,
+        
+     
     
       }
 },{
@@ -70,6 +71,15 @@ const User = sequelize.define('user', {
                     break;
                   case 6:
                     user.roleName = "staffs";
+                    break;
+                  case 7:
+                    user.roleName = "hotel receptionist";
+                    break;
+                  case 8:
+                    user.roleName = "gym receptionist";
+                    break;
+                  case 9:
+                    user.roleName = "event receptionist";
                     break;
                   default:
                     break;

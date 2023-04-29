@@ -1,5 +1,4 @@
 const express = require("express")
-const dotenv = require("dotenv").config()
 const app = express()
 const routes = require("./routes/Index")
 // const authRoute = require("./routes/Auth")
@@ -15,6 +14,7 @@ const connectDB = require("./config/connectDB")
 const  cors = require('cors')
 const path = require("path")
 const {errorHandler} = require("./middleware/Error")
+require("dotenv").config()
 
 app.use(cors());
 
@@ -39,8 +39,8 @@ app.use(routes)
 
 app.use(errorHandler)
 
+const port = process.env.Port || 9800
 
-const port = 9800
-app.listen( port,()=> console.log(`server running on ${port}`))
+app.listen(port,()=> console.log(`server running on ${port}`))
 
 
