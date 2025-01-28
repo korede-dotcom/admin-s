@@ -1,4 +1,6 @@
+const Branch = require("../models/Branch");
 const EventConfig = require("../models/EventConfig")
+const EventBookings = require("../models/EventBookers")
 
 const createEventConfig = async (eventConfig) => {
     return await EventConfig.create(eventConfig);
@@ -9,11 +11,18 @@ const createEventConfig = async (eventConfig) => {
   };
   
   const getAllEventConfigs = async () => {
-    return await EventConfig.findAll({order: [['createdAt', 'DESC']]});
+    EventConfig.belongsTo(Branch,{foreignKey:"branch_id"})
+    return await EventConfig.findAll({where:{},include:{model:Branch},order: [['createdAt', 'DESC']]});
+  };
+
+  const getAllEventReport = async () => {
+    EventConfig.belongsTo(Branch,{foreignKey:"branch_id"})
+    return await EventConfig.findAll({where:{},include:{model:Branch},order: [['createdAt', 'DESC']]});
   };
 
   const getAllEventConfigsActive = async (branch) => {
-    return await EventConfig.findAll({where:{status:true,branch:parseInt(branch)},order: [['createdAt', 'DESC']]});
+    EventConfig.belongsTo(Branch,{foreignKey:"branch_id"})
+    return await EventConfig.findAll({where:{status:true},include:{model:Branch},order: [['createdAt', 'DESC']]});
   
   };
 
@@ -36,7 +45,7 @@ const createEventConfig = async (eventConfig) => {
   };
 
   const updateEventConfig = async (id, eventConfig) => {
-    const updatedEventConfig = await EventConfig.update(eventConfig, {
+    const updatedEventConfig = await EventConfig.update({eventConfig}, {
       where: { _id: id },
     });
     return updatedEventConfig;
@@ -49,6 +58,10 @@ const createEventConfig = async (eventConfig) => {
     return deletedEventConfig;
   };
 
+
+
+
+
   
   module.exports = {
     createEventConfig,
@@ -60,7 +73,8 @@ const createEventConfig = async (eventConfig) => {
     approve,
     getAllEventConfigsPending,
     getAllEventConfigsPendingByBranch,
-    getAllEventConfigsActiveBybranch
+    getAllEventConfigsActiveBybranch,
+    getAllEventReport
 
 
   }

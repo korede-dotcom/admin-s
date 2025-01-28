@@ -34,8 +34,10 @@ const Login =  async (req,res) => {
 
     if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
         return res.status(401).json({
-          status: 'fail',
-          message: 'Incorrect email or password',
+            data:{
+                status: false,
+                message: 'Incorrect email or password',
+            }
         });
       }
   
@@ -45,9 +47,13 @@ const Login =  async (req,res) => {
          createSendToken(userJson,200,res)
    
     } else {
-        return res.status(401).json({
+        return res.status(200).json({
             status:false,
-            message:"incorrect email or password"
+            message:"incorrect email or password",
+            data:{
+                status:false,
+            message:"invalid email or password",
+            }
         });
     }
 }

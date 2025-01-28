@@ -38,9 +38,9 @@ const User = sequelize.define('user', {
         defaultValue: false,
     },
     status: {
-        type: DataTypes.ENUM('approved', 'declined', 'pending', 'suspended','false','true'),
+        type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: 'false',
+        defaultValue: false,
     },
     roleName: {
         type: DataTypes.STRING,
@@ -94,7 +94,7 @@ const User = sequelize.define('user', {
 );
 
 
-User.sync()
+User.sync({})
 
 module.exports = User;
 

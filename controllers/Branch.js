@@ -50,6 +50,16 @@ const create = asynchandler( async (req,res) => {
 });
 
 const update = asynchandler( async (req,res) => {
+    if (req.user.role_id === 1) {
+        const updatebranch = await Branchrepo.updateBranchById(req.query.id,{...req.body,status:true})
+        return res.status(200).json({
+            status:200,
+            message:"updatebranch updated ",
+            data:{
+                updatebranch
+            }
+        })
+    }
     const updatebranch = await Branchrepo.updateBranchById(req.query.id,{...req.body,status:false})
     return res.status(200).json({
         status:200,

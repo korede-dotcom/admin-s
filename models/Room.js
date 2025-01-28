@@ -49,7 +49,7 @@ const Room = sequelize.define('room', {
     primaryKey: true,
     foreignKey: true,
   },
-  branch:{
+  branch_id:{
     type: Sequelize.INTEGER,
     foreignKey: true,
   },

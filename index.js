@@ -15,15 +15,35 @@ const  cors = require('cors')
 const path = require("path")
 const {errorHandler} = require("./middleware/Error")
 require("dotenv").config()
+const { Sequelize } = require('sequelize');
 
 app.use(cors());
 
 (async () => {
-  await connectDB.authenticate().then(() => {
-      console.log('DB Connected...'); 
-  }).catch(err => {
-      console.log(err);
-  })
+  const {dbName,dbUser,dbPassword,dbHost,dbDialect} = process.env
+ const conect = new Sequelize(dbName,dbUser,dbPassword, {
+      host: dbHost,
+      dialect: dbDialect,
+      logging: false,
+      pool: {
+          max: 5,
+          min: 0,
+          acquire: 30000,
+          idle: 10000, 
+          
+      }
+      
+  });
+  await conect.authenticate().then(() => {
+      console.log(
+        "jhgfd"
+      )
+    }).catch(rr => console.log(rr));
+  // await connectDB.authenticate().then(() => {
+  //     console.log('DB Connected...'); 
+  // }).catch(err => {
+  //     console.log(err);
+  // })
 })();
 
 
@@ -33,6 +53,9 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.Router())
 
 app.use('/uploads', express.static(path.join(__dirname,"uploads")));
+
+
+
 
 
 app.use(routes)

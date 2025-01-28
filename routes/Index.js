@@ -12,6 +12,8 @@ const imageRoute = require("./Image")
 const ServiceRoute = require("./Service")
 const DashboardRoute = require("./Dashboard")
 const TodoRoute = require("./Todo")
+const ExpensisRoute = require("./Expensis")
+const PaystackRoute = require("./Paystack")
 
 
 
@@ -29,7 +31,8 @@ routes.use("/images",imageRoute)
 routes.use("/service",ServiceRoute)
 routes.use("/dashboard",DashboardRoute)
 routes.use("/todos",TodoRoute)
-
+routes.use("/payments",PaystackRoute)
+routes.use("/expensis",ExpensisRoute)
 
 
 

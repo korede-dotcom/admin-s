@@ -14,13 +14,13 @@ const Event = sequelize.define('event', {
   },
   title: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
-  firstname:{
+  first_name:{
     type: DataTypes.STRING,
     allowNull: false,
   },
-  lastname:{
+  last_name:{
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -28,7 +28,7 @@ const Event = sequelize.define('event', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  phonenumber:{
+  phone_number:{
     type: DataTypes.STRING,
     allowNull: false,
   },

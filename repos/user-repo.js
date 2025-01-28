@@ -75,13 +75,14 @@ class UserRepository {
     }
   }
 
- async approve (id) {
+ async approve (body) {
+    console.log("🚀 ~ UserRepository ~ approve ~ body:", body)
     try {
-      const user = await User.findByPk(id);
+      const user = await User.findByPk(body.id);
       if (!user) {
         return null;
       }
-      const updatedUser = await User.update({status:"true"},{where:{_id:id},returning:true});
+      const updatedUser = await User.update({status:body.status},{where:{_id:body.id},returning:true});
    
       return updatedUser[1][0].dataValues;
     } catch (error) {
@@ -89,16 +90,31 @@ class UserRepository {
     }
   };
 
-  async update(id, updatedFields) {
+ async decline (id) {
     try {
       const user = await User.findByPk(id);
       if (!user) {
+        return null;
+      }
+      const updatedUser = await User.update({status:"false"},{where:{_id:id},returning:true});
+   
+      return updatedUser[1][0].dataValues;
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
+
+  async update(updatedFields) {
+    try {
+      const user = await User.findOne({where:{_id:updatedFields?.id}});
+      if (!user) {
         throw new Error(`User with id ${id} not found`);
       }
-      await user.update(updatedFields);
-      return user.toJSON();
+      const staff = await Manager.update({phonenumber:updatedFields.phonenumber,address:updatedFields.address},{where:{user_id:updatedFields?.id}})
+     const editedUser = await User.update({name:updatedFields.name,email:updatedFields.email},{where:{_id:updatedFields?.id}});
+      return editedUser;
     } catch (err) {
-      console.error(`Error updating user with id ${id}:`, err);
+      console.error(`Error updating user with id `, err);
       throw err;
     }
   }

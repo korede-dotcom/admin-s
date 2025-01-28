@@ -14,8 +14,8 @@ const getPkgs = asynchandler( async (req,res) => {
 });
 
 const getActivePkgs = asynchandler( async (req,res) => {
-    if(req.user){
-        const pkgs = await hotelConfigRepository.findAllApproveByBranch(req.user.branch)
+    if(req.user.role_id !== 1){
+        const pkgs = await hotelConfigRepository.findAllApproveByBranch(parseInt(req.user.branch))
         return res.status(200).json({
             message:"hotel pkgs fetched",
             data:{
@@ -24,7 +24,7 @@ const getActivePkgs = asynchandler( async (req,res) => {
         })
         
     }else{
-        const pkgs = await hotelConfigRepository.findAllActive()
+        const pkgs = await hotelConfigRepository.findAllApprove()
         return res.status(200).json({
             message:"hotel pkgs fetched",
             data:{
@@ -33,6 +33,61 @@ const getActivePkgs = asynchandler( async (req,res) => {
         })
     }
 });
+
+const getAavailableRoom = asynchandler( async (req,res) => {
+    if(req.user.role_id !== 1){
+        const pkgs = await hotelConfigRepository.findAvailableRooms(parseInt(req.user.branch))
+        return res.status(200).json({
+            message:"hotel pkgs fetched",
+            data:{
+                pkgs
+            }
+        })
+        
+    }else{
+        const pkgs = await hotelConfigRepository.findAvailableRoomsGeneral()
+        return res.status(200).json({
+            message:"hotel pkgs fetched",
+            data:{
+                pkgs
+            }
+        })
+    }
+});
+
+const getBookings = asynchandler( async (req,res) => {
+    if(req.user.role_id !== 1){
+        const pkgs = await hotelConfigRepository.BranchBookings(parseInt(req.user.branch))
+        return res.status(200).json({
+            message:"hotel pkgs fetched",
+            data:{
+                pkgs
+            }
+        })
+        
+    }else{
+        const pkgs = await hotelConfigRepository.Bookings()
+        console.log("🚀 ~ file: Hotelmanager.js:70 ~ getBookings ~ pkgs:", pkgs)
+        return res.status(200).json({
+            message:"hotel pkgs fetched",
+            data:{
+                pkgs
+            }
+        })
+    }
+});
+
+
+
+const clientHotelRoom = asynchandler(async (req,res) => {
+    const pkgs = await hotelConfigRepository.findDistint()
+    return res.status(200).json({
+        message:"hotel pkgs fetched",
+        data:{
+            pkgs
+        }
+    })
+})
 
 const getPendingPkgs = asynchandler( async (req,res) => {
     if(req.user){
@@ -84,8 +139,9 @@ const createhotelpkg = asynchandler(async (req,res) => {
        }
 
    });
+
    if(req.user.role_id === 1){
-    const createeventpackage = await hotelConfigRepository.create({...req.body,status:true,picture:[...imageObject.map(r => r.secure_url)]})
+    const createeventpackage = await hotelConfigRepository.create({...req.body,branch_id:req.body.branch,status:true,picture:[...imageObject.map(r => r.secure_url)]})
     return res.status(200).json({
         status:true,
         message:"hotel roomn created ",
@@ -115,6 +171,16 @@ const updatehotelmpkg = asynchandler( async (req,res) => {
     })
 });
 
+const bookRoom = asynchandler (async (req,res) => {
+    const createeventpackage = await hotelConfigRepository.RoomBook(req.body)
+    return res.status(200).json({
+        message:"event hotel package updated ",
+        data:{
+            createeventpackage
+        }
+    })
+})
+
 
 
 module.exports = {
@@ -123,7 +189,11 @@ module.exports = {
     updatehotelmpkg,
     getActivePkgs,
     getPendingPkgs,
-    approve
+    approve,
+    clientHotelRoom,
+    getAavailableRoom,
+    getBookings,
+    bookRoom
 
 };
 

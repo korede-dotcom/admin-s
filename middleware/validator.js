@@ -60,12 +60,12 @@ const createEventConfigRules = [
   body('closing_time').notEmpty().withMessage('Closing time is required'),
   body('number_of_gusets').isInt({ min: 0 }).withMessage('Number of guests should be a positive integer'),
   body('price').notEmpty().withMessage('Price is required').isDecimal({ decimal_digits: '3' }).withMessage('Price should be a decimal with 3 digits'),
-  body('branch')
+  body('branch_id')
   .notEmpty().withMessage('Branch ID is required.')
   .isInt({ min: 1 }).withMessage('Branch ID must be a positive integer.'),
-body('service_id')
-  .notEmpty().withMessage('Branch ID is required.')
-  .isInt({ min: 1 }).withMessage('service_id must be a positive integer.'),
+// body('service_id')
+//   .notEmpty().withMessage('service_id is required.')
+//   .isInt({ min: 1 }).withMessage('service_id must be a positive integer.'),
 
   (req, res, next) => {
     const errors = validationResult(req);
@@ -88,6 +88,24 @@ const updateEventConfigRules = [
   body('price').optional().isDecimal({ decimal_digits: '3' }).withMessage('Price should be a decimal with 2 digits'),
   // body('price').optional().isDecimal({ decimal_digits: '2' }).withMessage('Price should be a decimal with 2 digits'),
   body('branch').optional(),
+
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+  }
+];
+
+const bookEvent = [
+  body('first_name').notEmpty(),
+  body('last_name').notEmpty(),
+  body('email').notEmpty(),
+  body('phone_number').notEmpty(),
+  body('address').notEmpty().withMessage('address of guests should be a positive integer'),
+  body('payment_mode').notEmpty().withMessage('Price should be a decimal with 2 digits'),
+  // body('price').optional().isDecimal({ decimal_digits: '2' }).withMessage('Price should be a decimal with 2 digits'),
 
   (req, res, next) => {
     const errors = validationResult(req);
@@ -190,8 +208,8 @@ const createHotelConfigValidator = [
   body('service_id').notEmpty().withMessage("service_id is required"),
   body('price').isDecimal({ decimal_digits: '2' }).withMessage('Price must be a decimal number with 2 decimal places'),
   body('branch')
-  .notEmpty().withMessage('Branch ID is required.')
-  .isInt({ min: 1 }).withMessage('Branch ID must be a positive integer.'),
+  .notEmpty().withMessage('branch is required.')
+  .isInt({ min: 1 }).withMessage('branch must be a positive integer.'),
 body('service_id')
   .notEmpty().withMessage('service_idis required.')
   .isInt({ min: 1 }).withMessage('service_id must be a positive integer.'),
@@ -209,8 +227,8 @@ body('service_id')
 
 const validateBranch = [
     body('name').not().isEmpty().withMessage('Name is required.'),
-    body('address').not().isEmpty().withMessage('Name is required.'),
-    body('state').not().isEmpty().withMessage('Name is required.'),
+    body('address').not().isEmpty().withMessage('address is required.'),
+    body('state').not().isEmpty().withMessage('state is required.'),
     (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -277,7 +295,8 @@ module.exports = {validateUser,
   validatecreateAnyUser,
   serviceValidator,
   validateGenMessage,
-  todoListValidationRules
+  todoListValidationRules,
+  bookEvent
   
 };
 

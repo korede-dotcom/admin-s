@@ -34,7 +34,7 @@ const EventConfig = sequelize.define('eventconfig', {
     allowNull:false
   },
   
-  branch:{
+  branch_id:{
     type: Sequelize.INTEGER,
     primaryKey: true,
     foreignKey: true,

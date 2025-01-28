@@ -30,6 +30,10 @@ const HotelBooking = sequelize.define('hotelbooking', {
         type: Sequelize.INTEGER,
         foreignKey: true,
     },
+    branch_id:{
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+    },
     guest_address:{
         type:DataTypes.STRING,
         allowNull:false
@@ -47,6 +51,6 @@ const HotelBooking = sequelize.define('hotelbooking', {
       }
 });
 
-HotelBooking.sync()
+HotelBooking.sync({})
 
 module.exports = HotelBooking;
