@@ -6,7 +6,7 @@ const Expensis = require("../models/Expensis");
 const create = asynchandler( async (req, res) => {
   
     const newExpensis = req.body;
-    const createdExpensis = await Expensis.create({...newExpensis,created_by:req.user._id});
+    const createdExpensis = await Expensis.create({...newExpensis,created_by:req.user._id,branch_id:parseInt(req.user.branch) || 1});
     return res.status(200).json({
         status:true,
          message:"expensis created successfully",
@@ -17,6 +17,7 @@ const create = asynchandler( async (req, res) => {
     // res.status(201).json(createdTodo);
 
 });
+
 const getAll = asynchandler( async (req, res) => {
     if (req.user.role_id == 1) {
         const expensis = await Expensis.findAll({

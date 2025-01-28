@@ -4,7 +4,12 @@ const booking = require("../repos/event-booking-repo");
 const Services = require("../models/Services");
 const EventBookingRepository = new booking ()
 const EventBooking = require("../models/EventBookers");
-const {Sequelize,Op} = require("sequelize")
+const {Sequelize,Op} = require("sequelize");
+const Expensis = require("../models/Expensis");
+const Branch = require("../models/Branch");
+const Manager = require("../models/Manager");
+const { fn, col } = Sequelize;
+const { startOfMonth, endOfMonth } = require('date-fns');
 
 const getPkgs = asynchandler( async (req,res) => {
     const pkgs = await EventConfigRepository.getAllEventConfigs()
@@ -235,11 +240,12 @@ const Allbookings = asynchandler( async (req,res) => {
 
 const DashboardData = asynchandler(async (req,res) => {
     let count;
-    let salesData ;
+    let salesData,result,month,labels,data,today,totalAmount,startDate,endDate,totalExpens,totalAmounts,countBranch,countManager,formattedData,monthData,eventCount ;
+
     switch (req.user.role_id) {
         case 1:
 
-        const salesData = await EventBooking.findAll({
+         salesData = await EventBooking.findAll({
             attributes: [
               [Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM "date"')), 'month'],
               [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_amount'],
@@ -249,18 +255,18 @@ const DashboardData = asynchandler(async (req,res) => {
           });
           
           // Transform the query result into the required format
-          const result = salesData.map((entry) => ({
+           result = salesData.map((entry) => ({
             month: entry.get('month'),
             total_amount: entry.get('total_amount'),
           }));
           
           // Prepare the data for charting
-          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-          const labels = [];
-          const data = [];
+           months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+           labels = [];
+           data = [];
           
           for (let i = 1; i <= 12; i++) {
-            const monthData = result.find((item) => parseInt(item.month) === i);
+             monthData = result.find((item) => parseInt(item.month) === i);
             labels.push(months[i - 1]);
             data.push(monthData ? parseInt(monthData.total_amount) : 0); // Add 0 if no data for the month
           }
@@ -268,23 +274,51 @@ const DashboardData = asynchandler(async (req,res) => {
           
          
 
-          const today = new Date().toISOString().split('T')[0];  // This gives the format 'YYYY-MM-DD'
+           today = new Date().toISOString().split('T')[0];  // This gives the format 'YYYY-MM-DD'
 
         // Query to sum the total amount for today's bookings
-        const totalAmount = await EventBooking.findOne({
+         totalAmount = await EventBooking.findOne({
         attributes: [[Sequelize.fn('SUM', Sequelize.col('amount')), 'total_amount']],
         where: {
             // Use Sequelize.fn to strip time from the stored date as well
             date: Sequelize.fn('DATE', Sequelize.col('date')),  // This will convert the stored timestamp to a date only
         },
         });
-        console.log(totalAmount);
+
+
+// Get the start and end of the current month
+ startDate = startOfMonth(new Date());
+ endDate = endOfMonth(new Date());
+
+ totalExpens = await Expensis.findOne({
+    attributes: [[fn('SUM', col('amount')), 'total_amount']],
+    where: {
+        createdAt: {
+            [Op.between]: [startDate, endDate], // Filter by dates within the current month
+        },
+    },
+});
+
+// Get the total amount or return 0 if no records exist
+ totalAmounts = totalExpens?.dataValues?.total_amount || 0;
+console.log(`Total amount for the month: ${totalAmounts}`);
+
+
+
+         countBranch = await Branch.count()
+
+         countManager = await Manager.count()
+         eventCount = await EventBooking.count()
         
           
-          const formattedData = {
+           formattedData = {
             sales: {
               labels,
               tamount:totalAmount,
+              totalExpense:totalAmounts,
+              countBranch:countBranch,
+              countManager:countManager,
+              eventCount:eventCount,
               datasets: { label: 'Events dates', data },
             },
           };
@@ -296,7 +330,94 @@ const DashboardData = asynchandler(async (req,res) => {
           });
           
             break;
-        case 9:
+        case 2:
+
+         salesData = await EventBooking.findAll(
+            {where: {branch_id:parseInt(req.user.branch)} ,
+            attributes: [
+              [Sequelize.fn('EXTRACT', Sequelize.literal('MONTH FROM "date"')), 'month'],
+              [Sequelize.fn('SUM', Sequelize.col('amount')), 'total_amount'],
+            ],
+            group: [Sequelize.literal('EXTRACT(MONTH FROM "date")')],
+            order: [Sequelize.literal('EXTRACT(MONTH FROM "date")')],
+          });
+          
+          // Transform the query result into the required format
+           result = salesData.map((entry) => ({
+            month: entry.get('month'),
+            total_amount: entry.get('total_amount'),
+          }));
+          
+          // Prepare the data for charting
+           months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+           labels = [];
+           data = [];
+          
+          for (let i = 1; i <= 12; i++) {
+             monthData = result.find((item) => parseInt(item.month) === i);
+            labels.push(months[i - 1]);
+            data.push(monthData ? parseInt(monthData.total_amount) : 0); // Add 0 if no data for the month
+          }
+          
+          
+         
+
+           today = new Date().toISOString().split('T')[0];  // This gives the format 'YYYY-MM-DD'
+
+        // Query to sum the total amount for today's bookings
+         totalAmount = await EventBooking.findOne(
+            {where: {branch_id:parseInt(req.user.branch)},
+        attributes: [[Sequelize.fn('SUM', Sequelize.col('amount')), 'total_amount']],
+        where: {
+            // Use Sequelize.fn to strip time from the stored date as well
+            date: Sequelize.fn('DATE', Sequelize.col('date')),  // This will convert the stored timestamp to a date only
+        },
+        });
+
+
+// Get the start and end of the current month
+ startDate = startOfMonth(new Date());
+ endDate = endOfMonth(new Date());
+
+ totalExpens = await Expensis.findOne(
+    {where: {branch_id:parseInt(req.user.branch)},
+    attributes: [[fn('SUM', col('amount')), 'total_amount']],
+    where: {
+        createdAt: {
+            [Op.between]: [startDate, endDate], // Filter by dates within the current month
+        },
+    },
+});
+
+// Get the total amount or return 0 if no records exist
+ totalAmounts = totalExpens?.dataValues?.total_amount || 0;
+console.log(`Total amount for the month: ${totalAmounts}`);
+
+
+
+         countBranch = await Branch.count()
+
+         countManager = await Manager.count({where: {branch_id:parseInt(req.user.branch)}})
+         eventCount = await EventBooking.count({where: {branch_id:parseInt(req.user.branch)}})
+        
+          
+           formattedData = {
+            sales: {
+              labels,
+              tamount:totalAmount,
+              totalExpense:totalAmounts,
+              countBranch:countBranch,
+              countManager:countManager,
+              eventCount:eventCount,
+              datasets: { label: 'Events dates', data },
+            },
+          };
+          
+          return res.status(200).json({
+            status: true,
+            message: 'Dashboard data fetched successfully',
+            data: formattedData,
+          });
             
             break;
         case 1:

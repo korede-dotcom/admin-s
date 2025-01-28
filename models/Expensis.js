@@ -12,7 +12,7 @@ const Expensis = sequelize.define('expensis', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
-    foreignKey: true,
+    
   },
   amount:{
     type: DataTypes.DOUBLE,
@@ -23,7 +23,7 @@ const Expensis = sequelize.define('expensis', {
   },
   branch_id:{
     type: Sequelize.INTEGER,
-    foreignKey: true,
+    allowNull: false,
   },
  
 });

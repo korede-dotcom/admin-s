@@ -4,7 +4,7 @@ const allowedUser = require("../middleware/Authorization")
 const {validateUser,validatecreateUser,validatecreateAnyUser} = require("../middleware/validator")
 const {protect} = require("../repos/token-repo")
 
-routes.get("/",protect,allowedUser([1,5]) ,usersControl.getUsers)
+routes.get("/",protect,allowedUser([1,5,2]) ,usersControl.getUsers)
       .get("/pending",protect,allowedUser([1,5]),usersControl.pendingUsers)
       .put("/approve",protect,allowedUser([1]),usersControl.approve)
       .get("/decline",protect,allowedUser([1]),usersControl.approve)
