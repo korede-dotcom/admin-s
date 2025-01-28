@@ -16,7 +16,7 @@ const Expensis = sequelize.define('expensis', {
   },
   amount:{
     type: DataTypes.DOUBLE("amount","2"),
-    defaultValue:0,
+  
   },
   created_by:{
     type: DataTypes.STRING,
