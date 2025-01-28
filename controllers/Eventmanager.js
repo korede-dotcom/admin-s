@@ -161,7 +161,7 @@ const updateeventpkg = asynchandler( async (req,res) => {
 const bookForClient = asynchandler( async (req,res) => {
     console.log("🚀 ~ file: Eventmanager.js:117 ~ bookForClient ~ req.body:", req.body)
     try {
-        const createeventpackage = await EventBookingRepository.create({...req.body,booked_by:req?.user?._id ? req?.user?._id : null })
+        const createeventpackage = await EventBookingRepository.create({...req.body,booked_by:req?.user?._id ? req?.user?._id : null,branch_id:parseInt(req?.user.branch) || 1 })
         return res.status(200).json({
            status:true,
             message:"event package updated ",
