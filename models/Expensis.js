@@ -15,7 +15,7 @@ const Expensis = sequelize.define('expensis', {
     foreignKey: true,
   },
   amount:{
-    type: DataTypes.DOUBLE("amount","2"),
+    type: DataTypes.DOUBLE,
   
   },
   created_by:{
